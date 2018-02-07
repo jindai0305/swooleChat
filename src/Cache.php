@@ -483,12 +483,7 @@ class RedisServer {
 	}
 
 	public function hmget($key, $array) {
-		$list = [];
-		$data = self::$conn_link->hmget($key, $array);
-		foreach ($data as $k => $v) {
-			$list[$array[$k]] = $v;
-		}
-		return $list;
+		return self::$conn_link->hmget($key, $array);
 	}
 	public function hgetall($key) {
 		return self::$conn_link->hgetall($key);

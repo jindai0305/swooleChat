@@ -1,5 +1,11 @@
 <?php
 trait BaseServer {
+	private $server;
+
+	public function setServer($server) {
+		$this->server = $server;
+	}
+
 	private function _createRedisKey($unique) {
 		return 'chat.{' . $unique . '}.info';
 	}
@@ -14,11 +20,17 @@ trait BaseServer {
 		}
 		if ($object->_accept_fd) {
 			$this->server->push($object->_accept_fd, $object->toJson());
+			unset($object);
 			return true;
 		}
-		$notice = $object->_notice_self;
+		if ($object->_group) {
+			$this->_pushGroup($object);
+			unset($object);
+			return true;
+		}
+		$send_fd = $object->_send_fd;
 		foreach ($this->server->connections as $fd) {
-			if (!$notice && $fd === $notice) {
+			if (!$object->_notice_self && $fd == $send_fd) {
 				continue;
 			}
 			$this->server->push($fd, $object->toJson());
@@ -28,5 +40,15 @@ trait BaseServer {
 		}
 		unset($object);
 		return true;
+	}
+
+	private function _pushGroup(PushObject $object) {
+		//redis取group中所有的用户
+		//遍历发送数据
+	}
+
+	private function _getFdByUnique($unique) {
+		$list = $this->redis->hmget($this->_createRedisKey($unique), ['fd']);
+		return $list['fd'];
 	}
 }

@@ -3,30 +3,35 @@ class LoginServer {
 	use BaseServer;
 
 	private $redis;
-	private $server;
+
 	public function __construct() {
 		$this->redis = Cache::factory();
-	}
-
-	public function setServer($server) {
-		$this->server = $server;
 	}
 
 	public function login($frame) {
 		$list = json_decode($frame->data);
 		$this->_replaceUser($frame, $list->data);
 		$object = $this->_setObject(false, $frame->fd);
-		$object->list = ['type' => 'newClient', 'data' => ['unique' => $list->data->unique, 'name' => $list->data->unique, 'face' => $list->data->face]];
+		$object->list = ['type' => 'newClient', 'data' => ['unique' => $list->data->unique, 'name' => $list->data->name, 'face' => $list->data->face]];
 		$this->_push($object);
 		$this->_replyUsers($frame->fd);
+		unset($object);
 	}
 
 	public function loginOut($fd) {
 		if (!is_numeric($fd)) {
 			$fd = $fd->fd;
 		}
-		$this->redis->del($this->_createRedisKey($this->server->table->get($fd, 'unique')));
+		$key = $this->_createRedisKey($this->server->table->get($fd, 'unique'));
+		$data = $this->redis->hgetall($key);
+		$this->redis->del($key);
 		$this->server->table->del($fd);
+		$object = $this->_setObject(false, $fd);
+		unset($data['fd']);
+		$object->list = ['type' => 'loginOut', 'data' => $data];
+		unset($data);
+		$this->_push($object);
+		unset($object);
 	}
 
 	public function connection($frame) {

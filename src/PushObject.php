@@ -1,8 +1,10 @@
 <?php
+
 class PushObject {
 	private $_send_fd = null;
 	private $_accept_fd = null;
 	private $_notice_self = false;
+	private $_group = null;
 	private $list = [];
 	private $json_list = '';
 
