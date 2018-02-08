@@ -1,4 +1,5 @@
 <?php
+namespace Lchat\Data;
 
 class PushObject {
 	private $_send_fd = null;

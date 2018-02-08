@@ -1,4 +1,7 @@
 <?php
+namespace Lchat\Traits;
+use Lchat\Data\PushObject;
+
 trait BaseServer {
 	private $server;
 

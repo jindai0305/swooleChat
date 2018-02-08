@@ -1,7 +1,6 @@
 <?php
-/**
- *自定义Redis类
- */
+namespace Lchat\Tools;
+
 class RedisServer {
 
 	private $redis_host;

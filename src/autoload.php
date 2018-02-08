@@ -1,5 +1,6 @@
 <?php
 namespace Lchat;
+use Lchat\Server\SwooleServer;
 
 class autoload {
 
@@ -23,16 +24,18 @@ class autoload {
 	 * @param string $className Fully qualified name of a class.
 	 */
 	public function autoload($className) {
-		if (strpos($className, DIRECTORY_SEPARATOR) === -1) {
-			$filepath = $this->directory . DIRECTORY_SEPARATOR . $className . 'php';
+		$filepath = $this->directory . DIRECTORY_SEPARATOR;
+		if (strpos($className, '\\') === false && substr($className, -6) === 'Server') {
+			$filepath .= 'Server' . DIRECTORY_SEPARATOR . $className;
 		} else {
 			if (strpos($className, $this->prefix) === 0) {
 				$parts = explode('\\', substr($className, $this->prefixLength));
 			} else {
 				$parts = explode('\\', $className);
 			}
-			$filepath = $this->directory . DIRECTORY_SEPARATOR . implode(DIRECTORY_SEPARATOR, $parts) . '.php';
+			$filepath .= implode(DIRECTORY_SEPARATOR, $parts);
 		}
+		$filepath .= '.php';
 		if (is_file($filepath)) {
 			require $filepath;
 		}

@@ -1,4 +1,7 @@
 <?php
+namespace Lchat\Server;
+use Lchat\Tools\Cache;
+use Lchat\Traits\BaseServer;
 
 class ChatServer {
 	const GROUP_UNIQUE = 'allcomment';

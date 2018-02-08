@@ -1,4 +1,8 @@
 <?php
+namespace Lchat\Server;
+use Lchat\Tools\Cache;
+use Lchat\Traits\BaseServer;
+
 class LoginServer {
 	use BaseServer;
 
